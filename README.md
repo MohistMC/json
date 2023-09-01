@@ -38,7 +38,7 @@ Gradle
  }
 
 dependencies {
-    implementation 'com.mohistmc:mjson:1.4.1'
+    implementation 'com.mohistmc:mjson:1.4.2'
 }
 ```  
 
