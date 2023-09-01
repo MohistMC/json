@@ -31,3 +31,14 @@ Read my tutorial blog on **[JSON Schema](http://www.kobrix.blogspot.com/2014/09/
 
 **[Goto mJson Official Website](http://bolerio.github.io/mjson/)**
 
+Gradle
+```
+ repositories {
+    maven {url "https://maven.mohistmc.com/"}
+ }
+
+dependencies {
+    implementation 'com.mohistmc:mjson:1.4.1'
+}
+```  
+

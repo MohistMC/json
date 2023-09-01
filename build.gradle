@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.mohistmc'
+version = '1.4.2'
+
+repositories {
+    maven { url "https://maven.mohistmc.com/"}
+}
+
+dependencies {
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            name = "Mohist-Maven"
+            setUrl("file:/Mohist-Maven/maven/")
+        }
+    }
+}
