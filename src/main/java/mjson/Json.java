@@ -18,6 +18,8 @@
  */
 package mjson;
 
+import json.XML;
+
 import java.io.IOException;
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -502,6 +504,10 @@ public class Json implements java.io.Serializable {
         return (Json) new Reader().read(jsonAsString);
     }
 
+    public static Json readXml(String jsonAsString) {
+        return (Json) new Reader().read(XML.toJSONObject(jsonAsString).toString());
+    }
+
     /**
      * <p>
      * Parse a JSON entity from a <code>URL</code>.
@@ -514,6 +520,11 @@ public class Json implements java.io.Serializable {
     public static Json read(URL location) {
         return (Json) new Reader().read(fetchContent(location));
     }
+
+    public static Json readXml(URL location) {
+        return (Json) new Reader().read(XML.toJSONObject(fetchContent(location)).toString());
+    }
+
 
     /**
      * <p>
