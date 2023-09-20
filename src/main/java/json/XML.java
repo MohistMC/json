@@ -67,10 +67,10 @@ public class XML {
      *      "http://stackoverflow.com/a/21791059/6030888">http://stackoverflow.com/a/21791059/6030888</a>
      */
     private static Iterable<Integer> codePointIterator(final String string) {
-        return new Iterable<Integer>() {
+        return new Iterable<>() {
             @Override
             public Iterator<Integer> iterator() {
-                return new Iterator<Integer>() {
+                return new Iterator<>() {
                     private int nextIndex = 0;
                     private int length = string.length();
 
@@ -968,9 +968,7 @@ public class XML {
      */
     private static final String indent(int indent) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            sb.append(' ');
-        }
+        sb.append(" ".repeat(Math.max(0, indent)));
         return sb.toString();
     }
 }

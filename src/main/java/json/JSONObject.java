@@ -167,7 +167,7 @@ public class JSONObject {
         // implementations to rearrange their items for a faster element
         // retrieval based on associative access.
         // Therefore, an implementation mustn't rely on the order of the item.
-        this.map = new HashMap<String, Object>();
+        this.map = new HashMap<>();
     }
 
     /**
@@ -182,9 +182,9 @@ public class JSONObject {
      */
     public JSONObject(JSONObject jo, String ... names) {
         this(names.length);
-        for (int i = 0; i < names.length; i += 1) {
+        for (String name : names) {
             try {
-                this.putOnce(names[i], jo.opt(names[i]));
+                this.putOnce(name, jo.opt(name));
             } catch (Exception ignore) {
             }
         }
@@ -282,9 +282,9 @@ public class JSONObject {
      */
     public JSONObject(Map<?, ?> m) {
         if (m == null) {
-            this.map = new HashMap<String, Object>();
+            this.map = new HashMap<>();
         } else {
-            this.map = new HashMap<String, Object>(m.size());
+            this.map = new HashMap<>(m.size());
         	for (final Entry<?, ?> e : m.entrySet()) {
         	    if(e.getKey() == null) {
         	        throw new NullPointerException("Null key.");
@@ -458,7 +458,7 @@ public class JSONObject {
      * @param initialCapacity initial capacity of the internal map.
      */
     protected JSONObject(int initialCapacity){
-        this.map = new HashMap<String, Object>(initialCapacity);
+        this.map = new HashMap<>(initialCapacity);
     }
 
     /**
@@ -895,15 +895,15 @@ public class JSONObject {
         if (value == null) {
             this.put(key, 1);
         } else if (value instanceof Integer) {
-            this.put(key, ((Integer) value).intValue() + 1);
+            this.put(key, (Integer) value + 1);
         } else if (value instanceof Long) {
-            this.put(key, ((Long) value).longValue() + 1L);
+            this.put(key, (Long) value + 1L);
         } else if (value instanceof BigInteger) {
             this.put(key, ((BigInteger)value).add(BigInteger.ONE));
         } else if (value instanceof Float) {
-            this.put(key, ((Float) value).floatValue() + 1.0f);
+            this.put(key, (Float) value + 1.0f);
         } else if (value instanceof Double) {
-            this.put(key, ((Double) value).doubleValue() + 1.0d);
+            this.put(key, (Double) value + 1.0d);
         } else if (value instanceof BigDecimal) {
             this.put(key, ((BigDecimal)value).add(BigDecimal.ONE));
         } else {
@@ -1088,9 +1088,7 @@ public class JSONObject {
                 return myE;
             }
             return Enum.valueOf(clazz, val.toString());
-        } catch (IllegalArgumentException e) {
-            return defaultValue;
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return defaultValue;
         }
     }
@@ -1124,7 +1122,7 @@ public class JSONObject {
             return defaultValue;
         }
         if (val instanceof Boolean){
-            return ((Boolean) val).booleanValue();
+            return (Boolean) val;
         }
         try {
             // we'll use the get anyway because it does string conversion.
@@ -1163,7 +1161,7 @@ public class JSONObject {
             return defaultValue;
         }
         if (val instanceof Boolean){
-            return ((Boolean) val).booleanValue();
+            return (Boolean) val;
         }
         try {
             // we'll use the get anyway because it does string conversion.
@@ -1687,7 +1685,7 @@ public class JSONObject {
      *            the bean
      */
     private void populateMap(Object bean) {
-        populateMap(bean, Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>()));
+        populateMap(bean, Collections.newSetFromMap(new IdentityHashMap<>()));
     }
 
     private void populateMap(Object bean, Set<Object> objectsRecord) {
@@ -1734,9 +1732,7 @@ public class JSONObject {
                                 }
                             }
                         }
-                    } catch (IllegalAccessException ignore) {
-                    } catch (IllegalArgumentException ignore) {
-                    } catch (InvocationTargetException ignore) {
+                    } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException ignore) {
                     }
                 }
             }
@@ -1819,9 +1815,7 @@ public class JSONObject {
             try {
                 Method im = i.getMethod(m.getName(), m.getParameterTypes());
                 return getAnnotation(im, annotationClass);
-            } catch (final SecurityException ex) {
-                continue;
-            } catch (final NoSuchMethodException ex) {
+            } catch (final SecurityException | NoSuchMethodException ex) {
                 continue;
             }
         }
@@ -1830,9 +1824,7 @@ public class JSONObject {
             return getAnnotation(
                     c.getSuperclass().getMethod(m.getName(), m.getParameterTypes()),
                     annotationClass);
-        } catch (final SecurityException ex) {
-            return null;
-        } catch (final NoSuchMethodException ex) {
+        } catch (final SecurityException | NoSuchMethodException ex) {
             return null;
         }
     }
@@ -1873,9 +1865,7 @@ public class JSONObject {
                     // since the annotation was on the interface, add 1
                     return d + 1;
                 }
-            } catch (final SecurityException ex) {
-                continue;
-            } catch (final NoSuchMethodException ex) {
+            } catch (final SecurityException | NoSuchMethodException ex) {
                 continue;
             }
         }
@@ -1889,9 +1879,7 @@ public class JSONObject {
                 return d + 1;
             }
             return -1;
-        } catch (final SecurityException ex) {
-            return -1;
-        } catch (final NoSuchMethodException ex) {
+        } catch (final SecurityException | NoSuchMethodException ex) {
             return -1;
         }
     }
@@ -2639,15 +2627,13 @@ public class JSONObject {
                 return object;
             }
 
-            if (object instanceof Collection) {
-                Collection<?> coll = (Collection<?>) object;
+            if (object instanceof Collection<?> coll) {
                 return new JSONArray(coll);
             }
             if (object.getClass().isArray()) {
                 return new JSONArray(object);
             }
-            if (object instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) object;
+            if (object instanceof Map<?, ?> map) {
                 return new JSONObject(map);
             }
             Package objectPackage = object.getClass().getPackage();
@@ -2715,11 +2701,9 @@ public class JSONObject {
             ((JSONObject) value).write(writer, indentFactor, indent);
         } else if (value instanceof JSONArray) {
             ((JSONArray) value).write(writer, indentFactor, indent);
-        } else if (value instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) value;
+        } else if (value instanceof Map<?, ?> map) {
             new JSONObject(map).write(writer, indentFactor, indent);
-        } else if (value instanceof Collection) {
-            Collection<?> coll = (Collection<?>) value;
+        } else if (value instanceof Collection<?> coll) {
             new JSONArray(coll).write(writer, indentFactor, indent);
         } else if (value.getClass().isArray()) {
             new JSONArray(value).write(writer, indentFactor, indent);
@@ -2828,7 +2812,7 @@ public class JSONObject {
      * @return a java.util.Map containing the entries of this object
      */
     public Map<String, Object> toMap() {
-        Map<String, Object> results = new HashMap<String, Object>();
+        Map<String, Object> results = new HashMap<>();
         for (Entry<String, Object> entry : this.entrySet()) {
             Object value;
             if (entry.getValue() == null || NULL.equals(entry.getValue())) {

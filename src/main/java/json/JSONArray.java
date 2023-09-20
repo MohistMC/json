@@ -72,7 +72,7 @@ public class JSONArray implements Iterable<Object> {
      * Construct an empty JSONArray.
      */
     public JSONArray() {
-        this.myArrayList = new ArrayList<Object>();
+        this.myArrayList = new ArrayList<>();
     }
 
     /**
@@ -150,9 +150,9 @@ public class JSONArray implements Iterable<Object> {
      */
     public JSONArray(Collection<?> collection) {
         if (collection == null) {
-            this.myArrayList = new ArrayList<Object>();
+            this.myArrayList = new ArrayList<>();
         } else {
-            this.myArrayList = new ArrayList<Object>(collection.size());
+            this.myArrayList = new ArrayList<>(collection.size());
             this.addAll(collection, true);
         }
     }
@@ -179,11 +179,11 @@ public class JSONArray implements Iterable<Object> {
      */
     public JSONArray(JSONArray array) {
         if (array == null) {
-            this.myArrayList = new ArrayList<Object>();
+            this.myArrayList = new ArrayList<>();
         } else {
             // shallow copy directly the internal array lists as any wrapping
             // should have been done already in the original JSONArray
-            this.myArrayList = new ArrayList<Object>(array.myArrayList);
+            this.myArrayList = new ArrayList<>(array.myArrayList);
         }
     }
 
@@ -221,7 +221,7 @@ public class JSONArray implements Iterable<Object> {
             throw new JSONException(
                     "JSONArray initial capacity cannot be negative.");
     	}
-    	this.myArrayList = new ArrayList<Object>(initialCapacity);
+    	this.myArrayList = new ArrayList<>(initialCapacity);
     }
 
     @Override
@@ -881,9 +881,7 @@ public class JSONArray implements Iterable<Object> {
                 return myE;
             }
             return Enum.valueOf(clazz, val.toString());
-        } catch (IllegalArgumentException e) {
-            return defaultValue;
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return defaultValue;
         }
     }
@@ -1722,7 +1720,7 @@ public class JSONArray implements Iterable<Object> {
      * @return a java.util.List containing the elements of this array
      */
     public List<Object> toList() {
-        List<Object> results = new ArrayList<Object>(this.myArrayList.size());
+        List<Object> results = new ArrayList<>(this.myArrayList.size());
         for (Object element : this.myArrayList) {
             if (element == null || JSONObject.NULL.equals(element)) {
                 results.add(null);
