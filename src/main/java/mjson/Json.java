@@ -2585,6 +2585,60 @@ public class Json implements java.io.Serializable {
             return object.get(property);
         }
 
+        // Mohist start
+        public boolean asBoolean(String property) {
+           return at(property).asBoolean();
+        }
+
+        public String asString(String property) {
+            return at(property).asString();
+        }
+
+        public int asInteger(String property) {
+            return at(property).asInteger();
+        }
+
+        public float asFloat(String property) {
+            return at(property).asFloat();
+        }
+
+        public double asDouble(String property) {
+            return at(property).asDouble();
+        }
+
+        public long asLong(String property) {
+            return at(property).asLong();
+        }
+
+        public short asShort(String property) {
+            return at(property).asShort();
+        }
+
+        public byte asByte(String property) {
+            return at(property).asByte();
+        }
+
+        public char asChar(String property) {
+            return at(property).asChar();
+        }
+
+        public Map<String, Object> asMap(String property) {
+            return at(property).asMap();
+        }
+
+        public Map<String, Json> asJsonMap(String property) {
+            return at(property).asJsonMap();
+        }
+
+        public List<Object> asList(String property) {
+            return at(property).asList();
+        }
+
+        public List<Json> asJsonList(String property) {
+            return at(property).asJsonList();
+        }
+        // Mohist end
+
         protected Json withOptions(Json other, Json allOptions, String path) {
             if (!allOptions.has(path))
                 allOptions.set(path, object());
