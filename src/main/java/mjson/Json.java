@@ -1118,6 +1118,60 @@ public class Json implements java.io.Serializable {
         throw new UnsupportedOperationException();
     }
 
+    // Mohist start
+    public boolean asBoolean(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String asString(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public int asInteger(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public float asFloat(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public double asDouble(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public long asLong(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public short asShort(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public byte asByte(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public char asChar(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Map<String, Object> asMap(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Map<String, Json> asJsonMap(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<Object> asList(String property) {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<Json> asJsonList(String property) {
+        throw new UnsupportedOperationException();
+    }
+    // Mohist end
+
     /**
      * @return <code>true</code> if this is a <code>Json</code> null entity
      * and <code>false</code> otherwise.
