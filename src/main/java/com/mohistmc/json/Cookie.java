@@ -1,4 +1,4 @@
-package json;
+package com.mohistmc.json;
 
 import java.util.Locale;
 

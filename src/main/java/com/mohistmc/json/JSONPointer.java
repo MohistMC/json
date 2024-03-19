@@ -1,4 +1,4 @@
-package json;
+package com.mohistmc.json;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 import static java.lang.String.format;
 

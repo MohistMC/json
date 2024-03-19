@@ -16,10 +16,11 @@
  * Note: this file incorporates source code from 3d party entities. Such code
  * is copyrighted by those entities as indicated below.
  */
-package mjson;
+package com.mohistmc.mjson;
 
-import json.XML;
-
+import com.mohistmc.json.XML;
+import com.mohistmc.json4bean.BeanSerializer;
+import com.mohistmc.json4bean.JSONSerializer;
 import java.io.IOException;
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -42,219 +43,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import lombok.Setter;
 
-/**
- * <p>
- * Represents a JSON (JavaScript Object Notation) entity. For more information about JSON, please see
- * <a href="http://www.json.org" target="_">http://www.json.org</a>.
- * </p>
- *
- * <p>
- * A JSON entity can be one of several things: an object (set of name/Json entity pairs), an array (a list of
- * other JSON entities), a string, a number, a boolean or null. All of those are represented as <code>Json</code>
- * instances. Each of the different types of entities supports a different set of operations. However, this class
- * unifies all operations into a single interface so in Java one is always dealing with a single object type: this class.
- * The approach effectively amounts to dynamic typing where using an unsupported operation won't be detected at
- * compile time, but will throw a runtime {@link UnsupportedOperationException}. It simplifies working with JSON
- * structures considerably and it leads to shorter at cleaner Java code. It makes much easier to work
- * with JSON structure without the need to convert to "proper" Java representation in the form of
- * POJOs and the like. When traversing a JSON, there's no need to type-cast at each step because there's
- * only one type: <code>Json</code>.
- * </p>
- *
- * <p>
- * One can examine the concrete type of a <code>Json</code> with one of the <code>isXXX</code> methods:
- * {@link #isObject()}, {@link #isArray()},{@link #isNumber()},{@link #isBoolean()},{@link #isString()},
- * {@link #isNull()}.
- * </p>
- *
- * <p>
- * The underlying representation of a given <code>Json</code> instance can be obtained by calling
- * the generic {@link #getValue()} method or one of the <code>asXXX</code> methods such
- * as {@link #asBoolean()} or {@link #asString()} etc.
- * JSON objects are represented as Java {@link Map}s while JSON arrays are represented as Java
- * {@link List}s. Because those are mutable aggregate structures, there are two versions of the
- * corresponding <code>asXXX</code> methods: {@link #asMap()} which performs a deep copy of the underlying
- * map, unwrapping every nested Json entity to its Java representation and {@link #asJsonMap()} which
- * simply return the map reference. Similarly there are {@link #asList()} and {@link #asJsonList()}.
- * </p>
- *
- * <h3>Constructing and Modifying JSON Structures</h3>
- *
- * <p>
- * There are several static factory methods in this class that allow you to create new
- * <code>Json</code> instances:
- * </p>
- *
- * <table summary="Factory static methods.">
- * <tr><td>{@link #read(String)}</td>
- * <td>Parse a JSON string and return the resulting <code>Json</code> instance. The syntax
- * recognized is as defined in <a href="http://www.json.org">http://www.json.org</a>.
- * </td>
- * </tr>
- * <tr><td>{@link #make(Object)}</td>
- * <td>Creates a Json instance based on the concrete type of the parameter. The types
- * recognized are null, numbers, primitives, String, Map, Collection, Java arrays
- * and <code>Json</code> itself.</td>
- * </tr>
- * <tr><td>{@link #nil()}</td>
- * <td>Return a <code>Json</code> instance representing JSON <code>null</code>.</td>
- * </tr>
- * <tr><td>{@link #object()}</td>
- * <td>Create and return an empty JSON object.</td>
- * </tr>
- * <tr><td>{@link #object(Object...)}</td>
- * <td>Create and return a JSON object populated with the key/value pairs
- * passed as an argument sequence. Each even parameter becomes a key (via
- * <code>toString</code>) and each odd parameter is converted to a <code>Json</code>
- * value.</td>
- * </tr>
- * <tr><td>{@link #array()}</td>
- * <td>Create and return an empty JSON array.</td>
- * </tr>
- * <tr><td>{@link #array(Object...)}</td>
- * <td>Create and return a JSON array from the list of arguments.</td>
- * </tr>
- * </table>
- *
- * <p>
- * To customize how Json elements are represented and to provide your own version of the
- * {@link #make(Object)} method, you create an implementation of the {@link Factory} interface
- * and configure it either globally with the {@link #setGlobalFactory(Factory)} method or
- * on a per-thread basis with the {@link #attachFactory(Factory)}/{@link #detachFactory()}
- * methods.
- * </p>
- *
- * <p>
- * If a <code>Json</code> instance is an object, you can set its properties by
- * calling the {@link #set(String, Object)} method which will add a new property or replace an existing one.
- * Adding elements to an array <code>Json</code> is done with the {@link #add(Object)} method.
- * Removing elements by their index (or key) is done with the {@link #delAt(int)} (or
- * {@link #delAt(String)}) method. You can also remove an element from an array without
- * knowing its index with the {@link #remove(Object)} method. All these methods return the
- * <code>Json</code> instance being manipulated so that method calls can be chained.
- * If you want to remove an element from an object or array and return the removed element
- * as a result of the operation, call {@link #atDel(int)} or {@link #atDel(String)} instead.
- * </p>
- *
- * <p>
- * If you want to add properties to an object in bulk or append a sequence of elements to array,
- * use the {@link #with(Json, Json...opts)} method. When used on an object, this method expects another
- * object as its argument and it will copy all properties of that argument into itself. Similarly,
- * when called on array, the method expects another array and it will append all elements of its
- * argument to itself.
- * </p>
- *
- * <p>
- * To make a clone of a Json object, use the {@link #dup()} method. This method will create a new
- * object even for the immutable primitive Json types. Objects and arrays are cloned
- * (i.e. duplicated) recursively.
- * </p>
- *
- * <h3>Navigating JSON Structures</h3>
- *
- * <p>
- * The {@link #at(int)} method returns the array element at the specified index and the
- * {@link #at(String)} method does the same for a property of an object instance. You can
- * use the {@link #at(String, Object)} version to create an object property with a default
- * value if it doesn't exist already.
- * </p>
- *
- * <p>
- * To test just whether a Json object has a given property, use the {@link #has(String)} method. To test
- * whether a given object property or an array elements is equal to a particular value, use the
- * {@link #is(String, Object)} and {@link #is(int, Object)} methods respectively. Those methods return
- * true if the given named property (or indexed element) is equal to the passed in Object as the second
- * parameter. They return false if an object doesn't have the specified property or an index array is out
- * of bounds. For example is(name, value) is equivalent to 'has(name) &amp;&amp; at(name).equals(make(value))'.
- * </p>
- *
- * <p>
- * To help in navigating JSON structures, instances of this class contain a reference to the
- * enclosing JSON entity (object or array) if any. The enclosing entity can be accessed
- * with {@link #up()} method.
- * </p>
- *
- * <p>
- * The combination of method chaining when modifying <code>Json</code> instances and
- * the ability to navigate "inside" a structure and then go back to the enclosing
- * element lets one accomplish a lot in a single Java statement, without the need
- * of intermediary variables. Here for example how the following JSON structure can
- * be created in one statement using chained calls:
- * </p>
- *
- * <pre><code>
- * {"menu": {
- * "id": "file",
- * "value": "File",
- * "popup": {
- *   "menuitem": [
- *     {"value": "New", "onclick": "CreateNewDoc()"},
- *     {"value": "Open", "onclick": "OpenDoc()"},
- *     {"value": "Close", "onclick": "CloseDoc()"}
- *   ]
- * }
- * "position": 0
- * }}
- * </code></pre>
- *
- * <pre><code>
- * import mjson.Json;
- * import static mjson.Json.*;
- * ...
- * Json j = object()
- *  .at("menu", object())
- *    .set("id", "file")
- *    .set("value", "File")
- *    .at("popup", object())
- *      .at("menuitem", array())
- *        .add(object("value", "New", "onclick", "CreateNewDoc()"))
- *        .add(object("value", "Open", "onclick", "OpenDoc()"))
- *        .add(object("value", "Close", "onclick", "CloseDoc()"))
- *        .up()
- *      .up()
- *    .set("position", 0)
- *  .up();
- * ...
- * </code></pre>
- *
- * <p>
- * If there's no danger of naming conflicts, a static import of the factory methods (<code>
- * import static json.Json.*;</code>) would reduce typing even further and make the code more
- * readable.
- * </p>
- *
- * <h3>Converting to String</h3>
- *
- * <p>
- * To get a compact string representation, simply use the {@link #toString()} method. If you
- * want to wrap it in a JavaScript callback (for JSON with padding), use the {@link #pad(String)}
- * method.
- * </p>
- *
- * <h3>Validating with JSON Schema</h3>
- *
- * <p>
- * Since version 1.3, mJson supports JSON Schema, draft 4. A schema is represented by the internal
- * class {@link mjson.Json.Schema}. To perform a validation, you have a instantiate a <code>Json.Schema</code>
- * using the factory method {@link mjson.Json.Schema} and then call its <code>validate</code> method
- * on a JSON instance:
- * </p>
- *
- * <pre><code>
- * import mjson.Json;
- * import static mjson.Json.*;
- * ...
- * Json inputJson = Json.read(inputString);
- * Json schema = Json.schema(new URI("http://mycompany.com/schemas/model"));
- * Json errors = schema.validate(inputJson);
- * for (Json error : errors.asJsonList())
- * 	   System.out.println("Validation error " + err);
- * </code></pre>
- *
- * @author Borislav Iordanov
- * @version 1.4.2
- */
 public class Json implements java.io.Serializable {
     public static final Factory defaultFactory = new DefaultFactory();
     @Serial
@@ -273,6 +63,17 @@ public class Json implements java.io.Serializable {
      * @author Joel Leitch
      */
     static Escaper escaper = new Escaper(false);
+    /**
+     * -- SETTER --
+     *  <p>
+     *  Specify a global Json
+     *  to be used by all threads that don't have a
+     *  specific thread-local factory attached to them.
+     *  </p>
+     *
+     * @param factory The new global factory
+     */
+    @Setter
     private static Factory globalFactory = defaultFactory;
     // TODO: maybe use initialValue thread-local method to attach global factory by default here...
     private static final ThreadLocal<Factory> threadFactory = new ThreadLocal<>();
@@ -358,7 +159,7 @@ public class Json implements java.io.Serializable {
                         !Objects.equals(base.getHost(), refuri.getHost()) ||
                         base.getPort() != refuri.getPort() ||
                         !base.getPath().equals(refuri.getPath()))) {
-            URI docuri = null;
+            URI docuri;
             refuri = refuri.normalize();
             if (refuri.getHost() == null)
                 docuri = new URI(refuri.getScheme() + ":" + refuri.getPath());
@@ -456,18 +257,6 @@ public class Json implements java.io.Serializable {
 
     /**
      * <p>
-     * Specify a global Json {@link Factory} to be used by all threads that don't have a
-     * specific thread-local factory attached to them.
-     * </p>
-     *
-     * @param factory The new global factory
-     */
-    public static void setGlobalFactory(Factory factory) {
-        globalFactory = factory;
-    }
-
-    /**
-     * <p>
      * Attach a thread-local Json {@link Factory} to be used specifically by this thread. Thread-local
      * Json factories are the only means to have different {@link Factory} implementations used simultaneously
      * in the same application (well, more accurately, the same ClassLoader).
@@ -521,10 +310,19 @@ public class Json implements java.io.Serializable {
         return (Json) new Reader().read(fetchContent(location));
     }
 
+    /**
+     * 从指定的URL位置读取XML内容，并将其转换为Json格式。
+     *
+     * @param location XML文件的位置，需要是一个有效的URL。
+     * @return 从XML转换得到的Json对象。
+     */
     public static Json readXml(URL location) {
         return (Json) new Reader().read(XML.toJSONObject(fetchContent(location)).toString());
     }
 
+    public static Json readBean(Object clazz) {
+        return read(JSONSerializer.serialize(BeanSerializer.serialize(clazz)));
+    }
 
     /**
      * <p>
@@ -653,7 +451,7 @@ public class Json implements java.io.Serializable {
         else if (el.enclosing.isArray()) {
             ArrayJson A = (ArrayJson) el.enclosing;
             int idx = 0;
-            while (A.L.get(idx) != parent && idx < A.L.size()) idx++;
+            while (A.L.get(idx) != parent) idx++;
             if (idx < A.L.size())
                 A.L.remove(idx);
         }
@@ -1170,6 +968,10 @@ public class Json implements java.io.Serializable {
     public List<Json> asJsonList(String property) {
         throw new UnsupportedOperationException();
     }
+
+    public <T> T asBean(Class<T> classZ) {
+        throw new UnsupportedOperationException();
+    }
     // Mohist end
 
     /**
@@ -1638,10 +1440,10 @@ public class Json implements java.io.Serializable {
 
             public Json apply(Json param) {
                 Json errors = null;
-                if (!param.isNumber()) return errors;
+                if (!param.isNumber()) return null;
                 double value = param.asDouble();
                 if (!Double.isNaN(min) && (value < min || exclusiveMin && value == min))
-                    errors = maybeError(errors, Json.make("Number " + param + " is below allowed minimum " + min));
+                    errors = maybeError(null, Json.make("Number " + param + " is below allowed minimum " + min));
                 if (!Double.isNaN(max) && (value > max || exclusiveMax && value == max))
                     errors = maybeError(errors, Json.make("Number " + param + " is above allowed maximum " + max));
                 if (!Double.isNaN(multipleOf) && (value / multipleOf) % 1 != 0)
@@ -1731,11 +1533,11 @@ public class Json implements java.io.Serializable {
 
             public Json apply(Json param) {
                 Json errors = null;
-                if (!param.isString()) return errors;
+                if (!param.isString()) return null;
                 String s = param.asString();
                 final int size = s.codePointCount(0, s.length());
                 if (size < min || size > max)
-                    errors = maybeError(errors, Json.make("String  " + param.toString(maxchars) +
+                    errors = maybeError(null, Json.make("String  " + param.toString(maxchars) +
                             " has length outside of the permitted range [" + min + "," + max + "]."));
                 if (pattern != null && !pattern.matcher(s).matches())
                     errors = maybeError(errors, Json.make("String  " + param.toString(maxchars) +
@@ -1753,9 +1555,9 @@ public class Json implements java.io.Serializable {
 
             public Json apply(Json param) {
                 Json errors = null;
-                if (!param.isArray()) return errors;
+                if (!param.isArray()) return null;
                 if (schema == null && schemas == null && additionalSchema == null) // no schema specified
-                    return errors;
+                    return null;
                 int size = param.asJsonList().size();
                 for (int i = 0; i < size; i++) {
                     Instruction S = schema != null ? schema
@@ -1800,7 +1602,7 @@ public class Json implements java.io.Serializable {
 
             public Json apply(Json param) {
                 Json errors = null;
-                if (!param.isObject()) return errors;
+                if (!param.isObject()) return null;
                 HashSet<String> checked = new HashSet<>();
                 for (CheckProperty I : props) {
                     if (param.has(I.name)) checked.add(I.name);
@@ -2691,6 +2493,10 @@ public class Json implements java.io.Serializable {
         public List<Json> asJsonList(String property) {
             return at(property).asJsonList();
         }
+
+        public <T> T asBean(Class<T> classZ) {
+            return BeanSerializer.deserialize(classZ, JSONSerializer.deserialize(this.toString()));
+        }
         // Mohist end
 
         protected Json withOptions(Json other, Json allOptions, String path) {
@@ -2936,14 +2742,14 @@ public class Json implements java.io.Serializable {
         private static final Map<Character, Character> escapes = new HashMap<>();
 
         static {
-            escapes.put(Character.valueOf('"'), Character.valueOf('"'));
-            escapes.put(Character.valueOf('\\'), Character.valueOf('\\'));
-            escapes.put(Character.valueOf('/'), Character.valueOf('/'));
-            escapes.put(Character.valueOf('b'), Character.valueOf('\b'));
-            escapes.put(Character.valueOf('f'), Character.valueOf('\f'));
-            escapes.put(Character.valueOf('n'), Character.valueOf('\n'));
-            escapes.put(Character.valueOf('r'), Character.valueOf('\r'));
-            escapes.put(Character.valueOf('t'), Character.valueOf('\t'));
+            escapes.put('"', '"');
+            escapes.put('\\', '\\');
+            escapes.put('/', '/');
+            escapes.put('b', '\b');
+            escapes.put('f', '\f');
+            escapes.put('n', '\n');
+            escapes.put('r', '\r');
+            escapes.put('t', '\t');
         }
 
         private CharacterIterator it;
@@ -3147,7 +2953,7 @@ public class Json implements java.io.Serializable {
                     if (c == 'u') {
                         add(unicode());
                     } else {
-                        Character value = escapes.get(Character.valueOf(c));
+                        Character value = escapes.get(c);
                         if (value != null) {
                             add(value);
                         }

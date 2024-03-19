@@ -7,10 +7,13 @@ group = 'com.mohistmc'
 version = '0.2'
 
 repositories {
+    mavenCentral()
     maven { url "https://maven.mohistmc.com/"}
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
