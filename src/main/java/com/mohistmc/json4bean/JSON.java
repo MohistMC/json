@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Seriable {
+public @interface JSON {
 
     /**
      * The order of serialization and deserialization of a member.

@@ -50,7 +50,7 @@ public class BeanSerializer {
             Object value = null;
             try {
                 field.setAccessible(true);
-                Seriable seriable = field.getAnnotation(Seriable.class);
+                JSON seriable = field.getAnnotation(JSON.class);
                 if (seriable != null) {
                     String key = field.getName();
                     value = serialize(field.get(bean));
@@ -86,7 +86,7 @@ public class BeanSerializer {
             boolean isRequired = false;
             try {
                 field.setAccessible(true);
-                Seriable seriable = field.getAnnotation(Seriable.class);
+                JSON seriable = field.getAnnotation(JSON.class);
                 if (seriable != null) {
                     String name = seriable.name();
                     if (name.isEmpty())
