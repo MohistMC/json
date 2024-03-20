@@ -1,4 +1,4 @@
-package com.mohistmc.json4bean;
+package com.mohistmc.mjson;
 
 
 import java.lang.reflect.Array;
@@ -66,9 +66,9 @@ public class JSONSerializer {
      *
      * @param json the json string which will be deserialized
      * @return the data object made from json
-     * @throws ParseException thrown when parsing an illegal json text
+     * @throws RuntimeException thrown when parsing an illegal json text
      */
-    public static Object deserialize(String json) throws ParseException {
+    public static Object deserialize(String json) throws RuntimeException {
         return new JSONSerializer(json).nextValue();
     }
 
@@ -80,7 +80,7 @@ public class JSONSerializer {
         this.position = -1;
     }
 
-    private Object nextValue() throws ParseException {
+    private Object nextValue() throws RuntimeException {
         try {
             char c = this.nextToken();
             switch (c) {
@@ -92,7 +92,7 @@ public class JSONSerializer {
                             while (true) {
                                 String key = nextValue().toString();
                                 if (nextToken() != ':') {
-                                    throw new ParseException(new String(this.buffer), this.position, "Expected a ':' after a key");
+                                    throw new RuntimeException("Expected a ':' after a key");
                                 }
                                 map.put(key, nextValue());
                                 switch (nextToken()) {
@@ -106,12 +106,12 @@ public class JSONSerializer {
                                     case '}':
                                         return map;
                                     default:
-                                        throw new ParseException(new String(this.buffer), this.position, "Expected a ',' or '}'");
+                                        throw new RuntimeException("Expected a ',' or '}'");
                                 }
                             }
                         } else return map;
                     } catch (ArrayIndexOutOfBoundsException ignore) {
-                        throw new ParseException(new String(this.buffer), this.position, "Expected a ',' or '}'");
+                        throw new RuntimeException("Expected a ',' or '}'");
                     }
 
 
@@ -138,12 +138,12 @@ public class JSONSerializer {
                                     case ']':
                                         return list;
                                     default:
-                                        throw new ParseException(new String(this.buffer), this.position, "Expected a ',' or ']'");
+                                        throw new RuntimeException("Expected a ',' or ']'");
                                 }
                             }
                         } else return list;
                     } catch (ArrayIndexOutOfBoundsException ignore) {
-                        throw new ParseException(new String(this.buffer), this.position, "Expected a ',' or ']'");
+                        throw new RuntimeException("Expected a ',' or ']'");
                     }
 
 
@@ -155,7 +155,7 @@ public class JSONSerializer {
                         switch (ch) {
                             case '\n':
                             case '\r':
-                                throw new ParseException(new String(this.buffer), this.position, "Unterminated string");
+                                throw new RuntimeException("Unterminated string");
                             case '\\':
                                 ch = this.buffer[++position];
                                 switch (ch) {
@@ -185,7 +185,7 @@ public class JSONSerializer {
                                             else if (tmp <= 'f' && tmp >= 'a')
                                                 tmp = tmp - ('a' - 10);
                                             else
-                                                throw new ParseException(new String(this.buffer), this.position, "Illegal hex code");
+                                                throw new RuntimeException("Illegal hex code");
                                             num += tmp << (i * 4);
                                         }
                                         sb.append((char) num);
@@ -197,7 +197,7 @@ public class JSONSerializer {
                                         sb.append(ch);
                                         break;
                                     default:
-                                        throw new ParseException(new String(this.buffer), this.position, "Illegal escape.");
+                                        throw new RuntimeException("Illegal escape.");
                                 }
                                 break;
                             default:
@@ -239,7 +239,7 @@ public class JSONSerializer {
             }
             return substr;
         } catch (ArrayIndexOutOfBoundsException ignore) {
-            throw new ParseException(new String(this.buffer), this.position, "Unexpected end");
+            throw new RuntimeException("Unexpected end");
         }
     }
 

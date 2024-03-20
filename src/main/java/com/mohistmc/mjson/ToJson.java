@@ -1,4 +1,4 @@
-package com.mohistmc.json4bean;
+package com.mohistmc.mjson;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface JSON {
+public @interface ToJson {
 
     /**
      * The order of serialization and deserialization of a member.

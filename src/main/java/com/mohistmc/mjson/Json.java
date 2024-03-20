@@ -18,9 +18,6 @@
  */
 package com.mohistmc.mjson;
 
-import com.mohistmc.json.XML;
-import com.mohistmc.json4bean.BeanSerializer;
-import com.mohistmc.json4bean.JSONSerializer;
 import java.io.IOException;
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -44,6 +41,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.Setter;
+import org.xml.sax.InputSource;
 
 public class Json implements java.io.Serializable {
     public static final Factory defaultFactory = new DefaultFactory();
@@ -294,7 +292,7 @@ public class Json implements java.io.Serializable {
     }
 
     public static Json readXml(String jsonAsString) {
-        return (Json) new Reader().read(XML.toJSONObject(jsonAsString).toString());
+        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(jsonAsString)));
     }
 
     /**
@@ -317,7 +315,11 @@ public class Json implements java.io.Serializable {
      * @return 从XML转换得到的Json对象。
      */
     public static Json readXml(URL location) {
-        return (Json) new Reader().read(XML.toJSONObject(fetchContent(location)).toString());
+        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(fetchContent(location))));
+    }
+
+    public static Json read(Object object) {
+        return Json.factory().make(object);
     }
 
     public static Json readBean(Object clazz) {

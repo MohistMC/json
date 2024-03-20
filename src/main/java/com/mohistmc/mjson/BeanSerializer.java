@@ -1,4 +1,4 @@
-package com.mohistmc.json4bean;
+package com.mohistmc.mjson;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -50,7 +50,7 @@ public class BeanSerializer {
             Object value = null;
             try {
                 field.setAccessible(true);
-                JSON seriable = field.getAnnotation(JSON.class);
+                ToJson seriable = field.getAnnotation(ToJson.class);
                 if (seriable != null) {
                     String key = field.getName();
                     value = serialize(field.get(bean));
@@ -86,7 +86,7 @@ public class BeanSerializer {
             boolean isRequired = false;
             try {
                 field.setAccessible(true);
-                JSON seriable = field.getAnnotation(JSON.class);
+                ToJson seriable = field.getAnnotation(ToJson.class);
                 if (seriable != null) {
                     String name = seriable.name();
                     if (name.isEmpty())
