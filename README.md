@@ -3,7 +3,6 @@
 ##### Upstream
 
 * [**mjson**](https://github.com/bolerio/mjson)  
-* [**org.json**](https://github.com/stleary/JSON-java)
 
 Gradle
 ```
@@ -12,7 +11,7 @@ Gradle
  }
 
 dependencies {
-    implementation 'com.mohistmc:json:0.3'
+    implementation 'com.mohistmc:json:0.4'
 }
 ```  
 
