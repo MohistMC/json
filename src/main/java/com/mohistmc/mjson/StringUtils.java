@@ -17,6 +17,6 @@ public abstract class StringUtils {
 
         str = str.trim();
 
-        return (str.length() == 0) ? null : str;
+        return (str.isEmpty()) ? null : str;
     }
 }

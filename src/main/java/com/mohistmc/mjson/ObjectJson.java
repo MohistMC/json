@@ -104,7 +104,7 @@ public class ObjectJson extends Json {
     }
 
     public Properties asProperties() {
-        Properties  properties = new Properties();
+        Properties properties = new Properties();
         if (this != null) {
             // Don't use the new entrySet API to maintain Android support
             for (Entry<String, Object> mapEntry : asMap().entrySet()) {

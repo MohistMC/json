@@ -7,14 +7,12 @@ package com.mohistmc.mjson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * @author Satyendra Gurjar
@@ -44,14 +42,13 @@ public class SAXHandler extends DefaultHandler {
         return out;
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         InternalElement newElement = new InternalElement();
         newElement.name = localName;
 
         if (currentElement != null) {
             if (currentElement.children == null) {
-                currentElement.children = new ArrayList();
+                currentElement.children = new ArrayList<>();
             }
 
             currentElement.children.add(newElement);
@@ -65,8 +62,7 @@ public class SAXHandler extends DefaultHandler {
         currentElement = newElement;
     }
 
-    public void characters(char[] ch, int start, int length)
-            throws SAXException {
+    public void characters(char[] ch, int start, int length) {
         if (currentElement.value == null) {
             currentElement.value = new StringBuffer();
         }
@@ -74,8 +70,7 @@ public class SAXHandler extends DefaultHandler {
         currentElement.value.append(ch, start, length);
     }
 
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         if (currentElement.parent != null) {
             currentElement = currentElement.parent;
         }
@@ -103,13 +98,11 @@ public class SAXHandler extends DefaultHandler {
         }
 
         if (element.children == null) {
-            put(out, element.name,
-                    (element.value != null) ? (trimWhitespaces ? element.value.toString().trim() : element.value.toString()) : "");
+            put(out, element.name, (element.value != null) ? (trimWhitespaces ? element.value.toString().trim() : element.value.toString()) : "");
         } else {
             HashMap m = new HashMap();
 
-            for (Iterator i = element.children.iterator(); i.hasNext(); )
-                createMap((InternalElement) i.next(), m);
+            for (Object object : element.children) createMap((InternalElement) object, m);
 
             put(out, element.name, m);
         }
@@ -130,7 +123,7 @@ public class SAXHandler extends DefaultHandler {
             return;
         }
 
-        ArrayList l = new ArrayList();
+        ArrayList l = new ArrayList<>();
         l.add(o);
         l.add(value);
         m.put(key, l);

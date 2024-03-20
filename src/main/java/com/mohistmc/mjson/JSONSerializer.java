@@ -13,6 +13,14 @@ import java.util.Map;
  */
 public class JSONSerializer {
 
+    private final char[] buffer;
+    private int position;
+
+    private JSONSerializer(String string) {
+        this.buffer = string.toCharArray();
+        this.position = -1;
+    }
+
     /**
      * Serializing a data object combined by values which types are Number Bollean Map Collection Array null to Json
      *
@@ -70,14 +78,6 @@ public class JSONSerializer {
      */
     public static Object deserialize(String json) throws RuntimeException {
         return new JSONSerializer(json).nextValue();
-    }
-
-    private int position;
-    private final char[] buffer;
-
-    private JSONSerializer(String string) {
-        this.buffer = string.toCharArray();
-        this.position = -1;
     }
 
     private Object nextValue() throws RuntimeException {

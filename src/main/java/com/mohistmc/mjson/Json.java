@@ -330,8 +330,8 @@ public class Json implements java.io.Serializable {
         var jo = Json.object();
         if (properties != null && !properties.isEmpty()) {
             Enumeration<?> enumProperties = properties.propertyNames();
-            while(enumProperties.hasMoreElements()) {
-                String name = (String)enumProperties.nextElement();
+            while (enumProperties.hasMoreElements()) {
+                String name = (String) enumProperties.nextElement();
                 jo.set(name, properties.getProperty(name));
             }
         }

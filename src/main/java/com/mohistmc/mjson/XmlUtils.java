@@ -17,16 +17,15 @@ import org.xml.sax.SAXException;
  * @author Satyendra Gurjar
  */
 public abstract class XmlUtils {
-    public static final String CVSKeywords = "@(#) RcsModuleId = $Id:$ $Name:$";
     public static final String DEFAULT_NAMESPACE_PREFIX = "ns1";
     // -----------------------------------------------
     // -------- Thread Local SAXParser ---------------
     // -----------------------------------------------
-    private static ThreadLocalSAXParser tlSAXParser = new ThreadLocalSAXParser();
+    private static final ThreadLocalSAXParser tlSAXParser = new ThreadLocalSAXParser();
     // -----------------------------------------------
     // --------Thread Local SAX Handler --------------
     // -----------------------------------------------
-    private static ThreadLocalSAXHandler tlSAXHandler = new ThreadLocalSAXHandler();
+    private static final ThreadLocalSAXHandler tlSAXHandler = new ThreadLocalSAXHandler();
 
     /**
      * Converts xml into <code>Map</code>. Each tag name will be key and
@@ -89,7 +88,7 @@ public abstract class XmlUtils {
 
         Map.Entry root = (Map.Entry) i.next();
         StringBuffer buffer = new StringBuffer();
-        StringBuffer tagName = new StringBuffer();
+        StringBuilder tagName = new StringBuilder();
 
         if (namaspaceUri != null) {
             if (namespacePrefix == null) {
@@ -129,8 +128,8 @@ public abstract class XmlUtils {
     }
 
     public static void mapToXml(Map in, StringBuffer out) {
-        for (Iterator i = in.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Object object : in.entrySet()) {
+            Map.Entry entry = (Map.Entry) object;
             Object vo = entry.getValue();
 
             if (vo instanceof String) {
@@ -142,9 +141,9 @@ public abstract class XmlUtils {
                 mapToXml((Map) vo, out);
                 out.append("</").append(entry.getKey()).append('>');
             } else if (vo instanceof List) {
-                for (Iterator li = ((List) vo).iterator(); li.hasNext(); ) {
+                for (Object o : (List) vo) {
                     out.append('<').append(entry.getKey()).append('>');
-                    mapToXml((Map) li.next(), out);
+                    mapToXml((Map) o, out);
                     // NOTE: we can never have list of anything but Map's.
                     out.append("</").append(entry.getKey()).append('>');
                 }
