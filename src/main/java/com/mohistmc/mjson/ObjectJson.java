@@ -1,5 +1,6 @@
 package com.mohistmc.mjson;
 
+import com.mohistmc.json.JSONObject;
 import com.mohistmc.json4bean.BeanSerializer;
 import com.mohistmc.json4bean.JSONSerializer;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 public class ObjectJson extends Json {
 
@@ -102,6 +104,20 @@ public class ObjectJson extends Json {
 
     public <T> T asBean(Class<T> classZ) {
         return BeanSerializer.deserialize(classZ, JSONSerializer.deserialize(this.toString()));
+    }
+
+    public Properties asProperties() {
+        Properties  properties = new Properties();
+        if (this != null) {
+            // Don't use the new entrySet API to maintain Android support
+            for (Entry<String, Object> mapEntry : asMap().entrySet()) {
+                Object value = mapEntry.getValue();
+                if (!(value instanceof Json)) {
+                    properties.put(mapEntry.getKey(), value.toString());
+                }
+            }
+        }
+        return properties;
     }
     // Mohist end
 

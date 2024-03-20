@@ -32,6 +32,7 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -39,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.Setter;
@@ -320,6 +322,18 @@ public class Json implements java.io.Serializable {
 
     public static Json readBean(Object clazz) {
         return read(JSONSerializer.serialize(BeanSerializer.serialize(clazz)));
+    }
+
+    public static Json read(Properties properties) {
+        var jo = Json.object();
+        if (properties != null && !properties.isEmpty()) {
+            Enumeration<?> enumProperties = properties.propertyNames();
+            while(enumProperties.hasMoreElements()) {
+                String name = (String)enumProperties.nextElement();
+                jo.set(name, properties.getProperty(name));
+            }
+        }
+        return jo;
     }
 
     /**
@@ -968,6 +982,10 @@ public class Json implements java.io.Serializable {
     }
 
     public <T> T asBean(Class<T> classZ) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Properties asProperties() {
         throw new UnsupportedOperationException();
     }
     // Mohist end
