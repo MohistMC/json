@@ -143,9 +143,9 @@ public class BeanSerializer {
 
     public static <T> T deserialize(Class<T> klass, Object object) {
         try {
-            if (object instanceof Number || object instanceof String || object instanceof Boolean)
+            if (object instanceof Number || object instanceof String || object instanceof Boolean) {
                 return (T) object;
-            else if (object instanceof Map) {
+            } else if (object instanceof Map) {
                 if (Map.class.isAssignableFrom(klass))
                     return klass.cast(object);
                 else
