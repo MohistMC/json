@@ -1,5 +1,6 @@
 package com.mohistmc.mjson;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -101,6 +102,10 @@ public class ObjectJson extends Json {
 
     public <T> T asBean(Class<T> classZ) {
         return BeanSerializer.deserialize(classZ, JSONSerializer.deserialize(this.toString()));
+    }
+
+    public byte[] asBytes() {
+        return this.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     public Properties asProperties() {

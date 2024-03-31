@@ -990,6 +990,10 @@ public class Json implements java.io.Serializable {
     public Properties asProperties() {
         throw new UnsupportedOperationException();
     }
+
+    public byte[] asBytes() {
+        throw new UnsupportedOperationException();
+    }
     // Mohist end
 
     /**
