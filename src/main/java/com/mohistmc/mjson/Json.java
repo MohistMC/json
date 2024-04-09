@@ -311,11 +311,11 @@ public class Json implements java.io.Serializable {
     /**
      * 从指定的URL位置读取XML内容，并将其转换为Json格式。
      *
-     * @param location XML文件的位置，需要是一个有效的URL。
+     * @param url XML文件的位置，需要是一个有效的URL。
      * @return 从XML转换得到的Json对象。
      */
-    public static Json readXml(URL location) {
-        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(fetchContent(location))));
+    public static Json readXml(URL url) {
+        return readXml(url.toString());
     }
 
     public static Json read(Object object) {
