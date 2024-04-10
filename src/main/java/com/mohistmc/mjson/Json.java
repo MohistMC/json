@@ -291,8 +291,8 @@ public class Json implements java.io.Serializable {
         return (Json) new Reader().read(jsonAsString);
     }
 
-    public static Json readXml(String jsonAsString) {
-        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(jsonAsString)));
+    public static Json readXml(String urlAsString) {
+        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(urlAsString)));
     }
 
     /**
@@ -309,13 +309,14 @@ public class Json implements java.io.Serializable {
     }
 
     /**
-     * 从指定的URL位置读取XML内容，并将其转换为Json格式。
+     * Read the XML content from the specified URL location and convert it to Json format.
      *
-     * @param url XML文件的位置，需要是一个有效的URL。
-     * @return 从XML转换得到的Json对象。
+     * @param location A valid URL where to load a JSON document from. Cannot be <code>null</code>.
+     * @return The JSON entity parsed: an object, array, string, number or boolean, or null. Note that
+     * this method will never return the actual Java <code>null</code>.
      */
-    public static Json readXml(URL url) {
-        return readXml(url.toString());
+    public static Json readXml(URL location) {
+        return readXml(location.toString());
     }
 
     public static Json read(Object object) {
