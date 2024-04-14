@@ -45,10 +45,6 @@ import org.xml.sax.InputSource;
 
 public class Json implements java.io.Serializable {
     public static final Factory defaultFactory = new DefaultFactory();
-    @Serial
-    private static final long serialVersionUID = 1L;
-    // TODO: maybe use initialValue thread-local method to attach global factory by default here...
-    private static final ThreadLocal<Factory> threadFactory = new ThreadLocal<>();
     /**
      * A utility class that is used to perform JSON escaping so that ", <, >, etc. characters are
      * properly encoded in the JSON string representation before returning to the client code.
@@ -62,7 +58,11 @@ public class Json implements java.io.Serializable {
      * @author Inderjeet Singh
      * @author Joel Leitch
      */
-    static Escaper escaper = new Escaper(false);
+    static final Escaper escaper = new Escaper(false);
+    @Serial
+    private static final long serialVersionUID = 1L;
+    // TODO: maybe use initialValue thread-local method to attach global factory by default here...
+    private static final ThreadLocal<Factory> threadFactory = new ThreadLocal<>();
     /**
      * -- SETTER --
      * <p>
@@ -98,7 +98,7 @@ public class Json implements java.io.Serializable {
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -176,13 +176,11 @@ public class Json implements java.io.Serializable {
 
     /**
      * <p>
-     * Replace all JSON references, as per the http://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03
+     * Replace all JSON references, as per the <a href="http://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03">...</a>
      * specification, by their referants.
      * </p>
      *
      * @param json
-     * @param duplicate
-     * @param done
      * @return
      */
     static Json expandReferences(Json json,
@@ -292,7 +290,7 @@ public class Json implements java.io.Serializable {
     }
 
     public static Json readXml(String urlAsString) {
-        return Json.factory().make(XmlUtils.xmlToMap(new InputSource(urlAsString)));
+        return factory().make(XmlUtils.xmlToMap(new InputSource(urlAsString)));
     }
 
     /**
@@ -1235,14 +1233,14 @@ public class Json implements java.io.Serializable {
      *
      * <p>
      * More information about the various JSON schema specifications can be
-     * found at http://json-schema.org. JSON Schema is an  IETF draft (v4 currently) and
+     * found at <a href="http://json-schema.org">...</a>. JSON Schema is an  IETF draft (v4 currently) and
      * our implementation follows this set of specifications. A JSON schema is specified
      * as a JSON object that contains keywords defined by the specification. Here are
      * a few introductory materials:
-     * <ul>
-     * <li>http://jsonary.com/documentation/json-schema/ -
-     * a very well-written tutorial covering the whole standard</li>
-     * <li>http://spacetelescope.github.io/understanding-json-schema/ -
+     * <a href="*"><ul>
+     * <li>http://jsonary.com/document</a>ation/json-schema/ -
+     * a very well-written tutorial covering the<a href=" whole standard</li>
+     * <li>http://spacetelescope.gith">...</a>ub.io/understanding-json-schema/ -
      * online book, tutorial (Python/Ruby based)</li>
      * </ul>
      *
@@ -1279,8 +1277,8 @@ public class Json implements java.io.Serializable {
 
     static class DefaultSchema implements Schema {
         // Anything is valid schema
-        static Instruction any = param -> null;
-        int maxchars = 50;
+        static final Instruction any = param -> null;
+        final int maxchars = 50;
         URI uri;
         Json theschema;
         Instruction start;
@@ -1476,7 +1474,7 @@ public class Json implements java.io.Serializable {
         }
 
         static class Sequence implements Instruction {
-            ArrayList<Instruction> seq = new ArrayList<>();
+            final ArrayList<Instruction> seq = new ArrayList<>();
 
             public Json apply(Json param) {
                 Json errors = null;
@@ -1492,8 +1490,8 @@ public class Json implements java.io.Serializable {
         }
 
         static class CheckSchemaDependency implements Instruction {
-            Instruction schema;
-            String property;
+            final Instruction schema;
+            final String property;
 
             public CheckSchemaDependency(String property, Instruction schema) {
                 this.property = property;
@@ -1603,7 +1601,7 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckPropertyPresent implements Instruction {
-            String propname;
+            final String propname;
 
             public CheckPropertyPresent(String propname) {
                 this.propname = propname;
@@ -1618,10 +1616,10 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckObject implements Instruction {
+            final ArrayList<CheckProperty> props = new ArrayList<>();
+            final ArrayList<CheckPatternProperty> patternProps = new ArrayList<>();
             int min = 0, max = Integer.MAX_VALUE;
             Instruction additionalSchema = any;
-            ArrayList<CheckProperty> props = new ArrayList<>();
-            ArrayList<CheckPatternProperty> patternProps = new ArrayList<>();
 
             public Json apply(Json param) {
                 Json errors = null;
@@ -1653,8 +1651,8 @@ public class Json implements java.io.Serializable {
 
             // Object validation
             static class CheckProperty implements Instruction {
-                String name;
-                Instruction schema;
+                final String name;
+                final Instruction schema;
 
                 public CheckProperty(String name, Instruction schema) {
                     this.name = name;
@@ -1672,8 +1670,8 @@ public class Json implements java.io.Serializable {
 
             static class CheckPatternProperty // implements Instruction
             {
-                Pattern pattern;
-                Instruction schema;
+                final Pattern pattern;
+                final Instruction schema;
 
                 public CheckPatternProperty(String pattern, Instruction schema) {
                     this.pattern = Pattern.compile(pattern);
@@ -1693,7 +1691,7 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckType implements Instruction {
-            Json types;
+            final Json types;
 
             public CheckType(Json types) {
                 this.types = types;
@@ -1718,7 +1716,7 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckEnum implements Instruction {
-            Json theenum;
+            final Json theenum;
 
             public CheckEnum(Json theenum) {
                 this.theenum = theenum;
@@ -1734,7 +1732,7 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckAny implements Instruction {
-            ArrayList<Instruction> alternates = new ArrayList<>();
+            final ArrayList<Instruction> alternates = new ArrayList<>();
             Json schema;
 
             public Json apply(Json param) {
@@ -1748,7 +1746,7 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckOne implements Instruction {
-            ArrayList<Instruction> alternates = new ArrayList<>();
+            final ArrayList<Instruction> alternates = new ArrayList<>();
             Json schema;
 
             public Json apply(Json param) {
@@ -1771,8 +1769,8 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckNot implements Instruction {
-            Instruction I;
-            Json schema;
+            final Instruction I;
+            final Json schema;
 
             public CheckNot(Instruction I, Json schema) {
                 this.I = I;
@@ -1789,8 +1787,8 @@ public class Json implements java.io.Serializable {
         }
 
         class CheckPropertyDependency implements Instruction {
-            Json required;
-            String property;
+            final Json required;
+            final String property;
 
             public CheckPropertyDependency(String property, Json required) {
                 this.property = property;

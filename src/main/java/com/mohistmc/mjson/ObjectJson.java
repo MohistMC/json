@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class ObjectJson extends Json {
 
-    Map<String, Json> object = new LinkedHashMap<>();
+    final Map<String, Json> object = new LinkedHashMap<>();
 
     ObjectJson() {
     }

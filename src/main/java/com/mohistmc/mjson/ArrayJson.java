@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ArrayJson extends Json {
 
-    List<Json> L = new ArrayList<>();
+    final List<Json> L = new ArrayList<>();
 
     ArrayJson() {
     }

@@ -80,7 +80,7 @@ public class BeanSerializer {
     }
 
     public static <T> T deserialize(Class<T> klass, Map map) throws Exception {
-        T bean = klass.newInstance();
+        T bean = klass.getDeclaredConstructor().newInstance();
         for (Field field : klass.getDeclaredFields()) {
             Object value = null;
             boolean isRequired = false;
@@ -120,7 +120,7 @@ public class BeanSerializer {
     }
 
     public static <T, A> Collection<T> deserialize(Class<? extends Collection> klass, Class<T> genericType, A[] array) throws Exception {
-        Collection collection = klass.newInstance();
+        Collection collection = klass.getDeclaredConstructor().newInstance();
         for (A a : array) collection.add(deserialize(genericType, a));
         return collection;
     }

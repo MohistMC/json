@@ -84,10 +84,6 @@ public class SAXHandler extends DefaultHandler {
         throw e;
     }
 
-    public void fatalError(SAXParseException e) throws SAXException {
-        throw e;
-    }
-
     private void createMap(InternalElement element, HashMap out) {
         if (element == null) {
             throw new IllegalArgumentException("element is null");
