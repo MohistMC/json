@@ -11,7 +11,7 @@ Gradle
  }
 
 dependencies {
-    implementation 'com.mohistmc:json:0.4'
+    implementation 'com.mohistmc:json:0.5'
 }
 ```  
 

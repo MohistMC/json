@@ -37,9 +37,12 @@ public class BeanSerializer {
                 array.add(serialize(Array.get(bean, i)));
             return array;
         }
-        if (bean instanceof Map map) {
-            map.replaceAll((k, v) -> serialize(map.get(k)));
-            return map;
+        if (bean instanceof Map<?, ?> map) {
+            Map<Object, Object> newMap = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                newMap.put(entry.getKey(), serialize(entry.getValue()));
+            }
+            return newMap;
         }
 
         ArrayList<Integer> indexs = new ArrayList<>();
@@ -48,6 +51,8 @@ public class BeanSerializer {
         for (Field field : bean.getClass().getDeclaredFields()) {
             boolean isRequired = false;
             Object value = null;
+            boolean shouldThrowException = false;
+
             try {
                 field.setAccessible(true);
                 ToJson seriable = field.getAnnotation(ToJson.class);
@@ -68,9 +73,17 @@ public class BeanSerializer {
                     keys.add(positon, key);
                 }
             } catch (Exception ignore) {
-            } finally {
-                if (isRequired && null == value)
-                    throw new NullPointerException("Field " + field.getName() + " can't be null");
+                if (isRequired) {
+                    shouldThrowException = true;
+                }
+            }
+
+            if (isRequired && null == value && !shouldThrowException) {
+                shouldThrowException = true;
+            }
+
+            if (shouldThrowException) {
+                throw new NullPointerException("Field " + field.getName() + " can't be null");
             }
         }
         LinkedHashMap<String, Object> map = new LinkedHashMap<>(indexs.size());
@@ -84,6 +97,8 @@ public class BeanSerializer {
         for (Field field : klass.getDeclaredFields()) {
             Object value = null;
             boolean isRequired = false;
+            boolean shouldThrowException = false;
+
             try {
                 field.setAccessible(true);
                 ToJson seriable = field.getAnnotation(ToJson.class);
@@ -111,9 +126,13 @@ public class BeanSerializer {
                     field.set(bean, value);
                 }
             } catch (Exception ignore) {
-            } finally {
-                if (isRequired && value == null)
-                    throw new NullPointerException();
+                if (isRequired) {
+                    shouldThrowException = true;
+                }
+            }
+
+            if (isRequired && value == null && shouldThrowException) {
+                throw new NullPointerException();
             }
         }
         return bean;

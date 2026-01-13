@@ -1432,7 +1432,7 @@ public class Json implements java.io.Serializable {
                         seq.add(new CheckPropertyDependency(e.getKey(), e.getValue()));
                     else
                         seq.add(new CheckPropertyDependency(e.getKey(), Json.array(e.getValue())));
-            result = seq.seq.size() == 1 ? seq.seq.get(0) : seq;
+            result = seq.seq.size() == 1 ? seq.seq.getFirst() : seq;
             compiled.put(S, result);
             return result;
         }
@@ -1489,14 +1489,7 @@ public class Json implements java.io.Serializable {
             }
         }
 
-        static class CheckSchemaDependency implements Instruction {
-            final Instruction schema;
-            final String property;
-
-            public CheckSchemaDependency(String property, Instruction schema) {
-                this.property = property;
-                this.schema = schema;
-            }
+        record CheckSchemaDependency(String property, Instruction schema) implements Instruction {
 
             public Json apply(Json param) {
                 if (!param.isObject()) return null;
@@ -1650,14 +1643,7 @@ public class Json implements java.io.Serializable {
             }
 
             // Object validation
-            static class CheckProperty implements Instruction {
-                final String name;
-                final Instruction schema;
-
-                public CheckProperty(String name, Instruction schema) {
-                    this.name = name;
-                    this.schema = schema;
-                }
+            record CheckProperty(String name, Instruction schema) implements Instruction {
 
                 public Json apply(Json param) {
                     Json value = param.at(name);
@@ -1668,8 +1654,7 @@ public class Json implements java.io.Serializable {
                 }
             }
 
-            static class CheckPatternProperty // implements Instruction
-            {
+            static class CheckPatternProperty {
                 final Pattern pattern;
                 final Instruction schema;
 

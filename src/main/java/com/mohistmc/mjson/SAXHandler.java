@@ -35,8 +35,8 @@ public class SAXHandler extends DefaultHandler {
         this.trimWhitespaces = trimWhitespaces;
     }
 
-    public Map getMap() {
-        HashMap out = new HashMap();
+    public Map<String, Object> getMap() {
+        HashMap<String, Object> out = new HashMap<>();
         createMap(currentElement, out);
 
         return out;
@@ -84,7 +84,7 @@ public class SAXHandler extends DefaultHandler {
         throw e;
     }
 
-    private void createMap(InternalElement element, HashMap out) {
+    private void createMap(InternalElement element, HashMap<String, Object> out) {
         if (element == null) {
             throw new IllegalArgumentException("element is null");
         }
@@ -96,15 +96,17 @@ public class SAXHandler extends DefaultHandler {
         if (element.children == null) {
             put(out, element.name, (element.value != null) ? (trimWhitespaces ? element.value.toString().trim() : element.value.toString()) : "");
         } else {
-            HashMap m = new HashMap();
+            HashMap<String, Object> m = new HashMap<>();
 
-            for (Object object : element.children) createMap((InternalElement) object, m);
+            for (InternalElement object : element.children) {
+                createMap(object, m);
+            }
 
             put(out, element.name, m);
         }
     }
 
-    private void put(HashMap m, Object key, Object value) {
+    private void put(HashMap<String, Object> m, String key, Object value) {
         Object o = m.get(key);
 
         if (o == null) {
@@ -114,12 +116,12 @@ public class SAXHandler extends DefaultHandler {
         }
 
         if (o instanceof List) {
-            ((List) o).add(value);
+            ((List<Object>) o).add(value);
 
             return;
         }
 
-        ArrayList l = new ArrayList<>();
+        ArrayList<Object> l = new ArrayList<>();
         l.add(o);
         l.add(value);
         m.put(key, l);
@@ -131,7 +133,7 @@ public class SAXHandler extends DefaultHandler {
     private static class InternalElement {
         String name;
         StringBuffer value;
-        ArrayList children;
+        ArrayList<InternalElement> children;
         InternalElement parent;
         String namespaceUri;
     }

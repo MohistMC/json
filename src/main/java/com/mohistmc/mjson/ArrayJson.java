@@ -204,10 +204,10 @@ public class ArrayJson extends Json {
             String s = value.isObject() ? ((ObjectJson) value).toStringImpl(maxCharacters, done)
                     : value.isArray() ? ((ArrayJson) value).toStringImpl(maxCharacters, done)
                     : value.toString(maxCharacters);
-            if (sb.length() + s.length() > maxCharacters)
+            if (sb.length() + s.length() > maxCharacters) {
                 s = s.substring(0, Math.max(0, maxCharacters - sb.length()));
-            else
-                sb.append(s);
+            }
+            sb.append(s);
             if (i.hasNext())
                 sb.append(",");
             if (sb.length() >= maxCharacters) {

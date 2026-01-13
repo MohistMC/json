@@ -90,7 +90,11 @@ public class JSONSerializer {
                         if (nextToken() != '}') {
                             --position;
                             while (true) {
-                                String key = nextValue().toString();
+                                Object keyValue = nextValue();
+                                if (keyValue == null) {
+                                    throw new RuntimeException("Key cannot be null in JSON object");
+                                }
+                                String key = keyValue.toString();
                                 if (nextToken() != ':') {
                                     throw new RuntimeException("Expected a ':' after a key");
                                 }
