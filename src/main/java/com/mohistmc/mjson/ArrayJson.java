@@ -17,6 +17,10 @@ public class ArrayJson extends Json {
         super(e);
     }
 
+    @Override
+    public Iterator<Json> iterator() {
+        return L.iterator();
+    }
 
     public Json dup() {
         ArrayJson j = new ArrayJson();

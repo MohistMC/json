@@ -1,6 +1,7 @@
 package com.mohistmc.mjson;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class NumberJson extends Json {
@@ -73,5 +74,16 @@ public class NumberJson extends Json {
 
     public boolean equals(Object x) {
         return x instanceof NumberJson && val.doubleValue() == ((NumberJson) x).val.doubleValue();
+    }
+
+    @Override
+    public Iterator<Json> iterator() {
+        return new JsonSingleValueIterator() {
+            @Override
+            public Json next() {
+                super.next();
+                return NumberJson.this;
+            }
+        };
     }
 }

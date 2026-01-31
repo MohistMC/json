@@ -1,6 +1,7 @@
 package com.mohistmc.mjson;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class StringJson extends Json {
@@ -84,5 +85,16 @@ public class StringJson extends Json {
 
     public boolean equals(Object x) {
         return x instanceof StringJson && ((StringJson) x).val.equals(val);
+    }
+
+    @Override
+    public Iterator<Json> iterator() {
+        return new JsonSingleValueIterator() {
+            @Override
+            public Json next() {
+                super.next();
+                return StringJson.this;
+            }
+        };
     }
 }

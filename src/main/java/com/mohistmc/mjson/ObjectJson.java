@@ -14,6 +14,11 @@ public class ObjectJson extends Json {
 
     final Map<String, Json> object = new LinkedHashMap<>();
 
+    @Override
+    public Iterator<Json> iterator() {
+        return object.values().iterator();
+    }
+
     ObjectJson() {
     }
 

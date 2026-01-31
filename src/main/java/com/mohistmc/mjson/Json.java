@@ -33,6 +33,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
 import lombok.Setter;
 import org.xml.sax.InputSource;
 
-public class Json implements java.io.Serializable {
+public class Json implements java.io.Serializable, Iterable<Json> {
     public static final Factory defaultFactory = new DefaultFactory();
     /**
      * A utility class that is used to perform JSON escaping so that ", <, >, etc. characters are
@@ -82,6 +83,20 @@ public class Json implements java.io.Serializable {
 
     protected Json(Json enclosing) {
         this.enclosing = enclosing;
+    }
+
+    @Override
+    public Iterator<Json> iterator()
+    {
+        return new Iterator<Json>()
+        {
+            @Override
+            public boolean hasNext() { return false; }
+            @Override
+            public Json next() { return null; }
+            @Override
+            public void remove() { }
+        };
     }
 
     static String fetchContent(URL url) {
